@@ -1,20 +1,19 @@
 spring:
-  application:
-    name: ai-service
+  cloud:
+    discovery:
+      enabled: true
 
   rabbitmq:
     host: localhost
     port: 5672
-    username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
+    username: ${RABBITMQ_USERNAME}
 
   mongodb:
     uri: mongodb://localhost:27017/fitness_db
 
-gemini:
-  api:
-    url: ${GEMINI_URL}
-    key: ${GEMINI_KEY}
+server:
+  port: 8082
 
 eureka:
   client:
@@ -23,9 +22,16 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
 
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
+
+
+
 rabbitmq:
   queue:
     name: activity.queue
-
-server:
-  port: 8081
+  exchange:
+    name: activity.exchange
+  routing:
+    key: activity.routingkey
