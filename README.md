@@ -135,7 +135,7 @@ Used to:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/ai-fitness-app.git
+git clone https://github.com/EmmanuelAdah/fitness-app-microservices.git
 cd ai-fitness-app
 ```
 
