@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
