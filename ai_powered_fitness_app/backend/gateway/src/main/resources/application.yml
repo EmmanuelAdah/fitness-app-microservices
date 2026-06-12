@@ -5,39 +5,66 @@ server:
 spring:
   application:
     name: api-gateway
+
   cloud:
     gateway:
-      routes:
-        - id: user-service
-          uri: http://user-service:8081   # or lb://user-service with discovery
-          predicates:
-            - Path=/api/v1/users/**, /api/v1/auth/**
-          filters:
-            - StripPrefix=1
-            - name: CircuitBreaker
-              args:
-                name: userService
-                fallbackUri: forward:/fallback/user
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 100
-                redis-rate-limiter.burstCapacity: 200
-                key-resolver: "#{@userKeyResolver}"
+      server:
+        webflux:
+          routes:
+            - id: user-service
+              uri: lb://USER-SERVICE   # or lb://user-service with discovery
+              predicates:
+                - Path=/api/v1/users/**, /api/v1/auth/**
+              filters:
+                - StripPrefix=1
+                - name: CircuitBreaker
+                  args:
+                    name: userService
+                    fallbackUri: forward:/fallback/user
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 200
+                    key-resolver: "#{@userKeyResolver}"
 
-      # Global CORS
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods: "*"
-            allowedHeaders: "*"
-            allowCredentials: false
+            - id: activity-service
+              uri: lb://ACTIVITY-SERVICE   # or lb://activity-service with discovery
+              predicates:
+                - Path=/api/activity/**
+              filters:
+                - StripPrefix=1
+                - name: CircuitBreaker
+                  args:
+                    name: userService
+                    fallbackUri: forward:/fallback/activity
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 200
+                    key-resolver: "#{@userKeyResolver}"
+
+          # Global CORS
+          globalcors:
+            corsConfigurations:
+              '[/**]':
+                allowedOrigins: "*"
+                allowedMethods: "*"
+                allowedHeaders: "*"
+                allowCredentials: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 #  security:
 #    oauth2:
 #      resourceserver:
 #        jwt:
 #          issuer-uri: http://auth-service:8082/realms/your-realm  # Keycloak or your auth server
+
+jwt:
+  secret:
+    key: "my-super-secret-key-my-super-secret-secret"
 
 eureka:
   client:

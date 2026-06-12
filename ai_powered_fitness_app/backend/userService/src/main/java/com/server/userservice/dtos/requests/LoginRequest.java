@@ -1,5 +1,6 @@
 package com.server.userservice.dtos.requests;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -7,9 +8,10 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequest {
-    private String firstName;
-    private String lastName;
+public class LoginRequest {
+    @NotBlank
     private String email;
+
+    @NotBlank
     private String password;
 }

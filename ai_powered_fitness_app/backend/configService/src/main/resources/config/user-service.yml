@@ -16,6 +16,10 @@ spring:
       ddl-auto: update
     show-sql: true
 
+jwt:
+  secret:
+    key: "my-super-secret-key-my-super-secret-key"
+
 eureka:
   client:
     service-url:

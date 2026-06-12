@@ -17,15 +17,6 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
 
     @Override
-    public UserResponse saveUser(UserRequest request){
-        isValidRequest(request);
-        User mappedUser = modelMapper.map(request, User.class);
-
-        User savedUser = userRepository.save(mappedUser);
-        return modelMapper.map(savedUser, UserResponse.class);
-    }
-
-    @Override
     public UserResponse findById(String userId){
         User savedUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));

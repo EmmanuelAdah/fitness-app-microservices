@@ -1,38 +1,63 @@
 package com.server.gateway.filter;
 
 
-import org.springframework.http.HttpHeaders;
+import com.server.gateway.services.JwtService;
+import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 @Component
-public class JwtAuthenticationFilter implements WebFilter {
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter implements GlobalFilter {
+    private final JwtService jwtService;
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest();
+    public @NonNull Mono<Void> filter(
+            ServerWebExchange exchange,
+            @NonNull GatewayFilterChain chain) {
 
-        // Public endpoints (login, register, health)
-        String path = request.getURI().getPath();
-        if (path.startsWith("/api/v1/auth/login") ||
-                path.startsWith("/api/v1/auth/register") ||
-                path.equals("/actuator/health")) {
+        String header =
+                exchange.getRequest()
+                        .getHeaders()
+                        .getFirst("Authorization");
+
+        if (header == null ||
+                !header.startsWith("Bearer ")) {
+
             return chain.filter(exchange);
         }
 
-        String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            // You can add custom claims extraction here if needed
-        }
+        String token = header.substring(7);
 
-        return chain.filter(exchange)
-                .contextWrite(ReactiveSecurityContextHolder.clearContext());
+        Claims claims = jwtService.extractClaims(token);
+
+        ServerHttpRequest request =
+                exchange.getRequest()
+                        .mutate()
+                        .header(
+                                "X-User-Id",
+                                claims.getSubject()
+                        )
+                        .header(
+                                "X-User-Email",
+                                claims.get("email", String.class)
+                        )
+                        .header(
+                                "X-User-Role",
+                                claims.get("role", String.class)
+                        )
+                        .build();
+
+        return chain.filter(
+                exchange.mutate()
+                        .request(request)
+                        .build()
+        );
     }
 }
