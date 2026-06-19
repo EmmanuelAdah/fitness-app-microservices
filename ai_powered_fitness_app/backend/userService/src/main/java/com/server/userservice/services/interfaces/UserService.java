@@ -1,6 +1,5 @@
-package com.server.userservice.services;
+package com.server.userservice.services.interfaces;
 
-import com.server.userservice.dtos.requests.UserRequest;
 import com.server.userservice.dtos.response.UserResponse;
 
 public interface UserService {

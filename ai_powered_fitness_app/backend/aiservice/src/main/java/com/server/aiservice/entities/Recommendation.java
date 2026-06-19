@@ -1,4 +1,4 @@
-package com.server.aiservice.models;
+package com.server.aiservice.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

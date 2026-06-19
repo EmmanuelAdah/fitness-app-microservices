@@ -30,7 +30,7 @@ spring:
             - id: activity-service
               uri: lb://ACTIVITY-SERVICE   # or lb://activity-service with discovery
               predicates:
-                - Path=/api/activity/**
+                - Path=/api/v1/activity/**
               filters:
                 - StripPrefix=1
                 - name: CircuitBreaker

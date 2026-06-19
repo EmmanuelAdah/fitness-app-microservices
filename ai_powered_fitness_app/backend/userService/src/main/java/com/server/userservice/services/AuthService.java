@@ -3,13 +3,14 @@ package com.server.userservice.services;
 import com.server.userservice.data.models.User;
 import com.server.userservice.data.repositories.UserRepository;
 import com.server.userservice.dtos.requests.LoginRequest;
-import com.server.userservice.dtos.requests.UserRequest;
-import com.server.userservice.dtos.response.UserResponse;
+import com.server.userservice.dtos.requests.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.auth.InvalidCredentialsException;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.server.userservice.utils.Validator.isValidRequest;
 
@@ -17,18 +18,18 @@ import static com.server.userservice.utils.Validator.isValidRequest;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final JwtService jwtService;
+    private final AtomicReference<JwtService> jwtService = new AtomicReference<JwtService>();
     private final PasswordEncoder encoder;
     private final UserRepository repository;
     private final ModelMapper modelMapper;
 
 
-    public String register(UserRequest request){
+    public String register(RegisterRequest request){
         isValidRequest(request);
         User mappedUser = modelMapper.map(request, User.class);
 
         User savedUser = repository.save(mappedUser);
-        return jwtService.generateToken(savedUser);
+        return jwtService.get().generateToken(savedUser);
     }
 
     public String login(LoginRequest request) {
@@ -49,6 +50,6 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return jwtService.generateToken(user);
+        return jwtService.get().generateToken(user);
     }
 }

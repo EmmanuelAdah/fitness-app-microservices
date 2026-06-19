@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.aiservice.models.Activity;
-import com.server.aiservice.models.Recommendation;
+import com.server.aiservice.entities.Recommendation;
 import com.server.aiservice.repositories.RecommendationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,13 +1,13 @@
 package com.server.userservice.utils;
 
-import com.server.userservice.dtos.requests.UserRequest;
+import com.server.userservice.dtos.requests.RegisterRequest;
 import com.server.userservice.exceptions.InvalidEmailFormatException;
 import com.server.userservice.exceptions.InvalidNameFormatException;
 import java.util.regex.Pattern;
 
 public class Validator {
 
-    public static void isValidRequest(UserRequest request) {
+    public static void isValidRequest(RegisterRequest request) {
 //        isValidName(request.getFirstName(), "Firstname");
 //        isValidName(request.getLastName(), "Lastname");
 //        isValidEmail(request.getEmail());

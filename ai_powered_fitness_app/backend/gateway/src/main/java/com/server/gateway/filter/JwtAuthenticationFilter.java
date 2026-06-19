@@ -37,6 +37,10 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
         Claims claims = jwtService.extractClaims(token);
 
+        if (claims == null || !jwtService.isTokenExpired(claims.getExpiration())) {
+            return chain.filter(exchange);
+        }
+
         ServerHttpRequest request =
                 exchange.getRequest()
                         .mutate()

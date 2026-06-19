@@ -2,13 +2,12 @@ package com.server.userservice.services;
 
 import com.server.userservice.data.models.User;
 import com.server.userservice.data.repositories.UserRepository;
-import com.server.userservice.dtos.requests.UserRequest;
 import com.server.userservice.dtos.response.UserResponse;
 import com.server.userservice.exceptions.UserNotFoundException;
+import com.server.userservice.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import static com.server.userservice.utils.Validator.isValidRequest;
 
 @Service
 @RequiredArgsConstructor
